@@ -8,7 +8,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from tqdm import tqdm
-
+import os
 from torch.utils.tensorboard import SummaryWriter
 
 from model import MNISTNet
@@ -82,8 +82,8 @@ if __name__=='__main__':
 	print(f'test accuracy: {test_acc}')
      
     # save your model
-	if not os.path.exists('./models'):
-		os.mkdir('./models')
+	if not os.path.exists('./weights'):
+		os.mkdir('./weights')
 		
 	torch.save(net.state_dict(), f'./weights/mnist_net.pth')
 	
