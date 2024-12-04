@@ -41,4 +41,16 @@ def test(model, dataloader):
             total += y.size(0)
     return test_corrects / total
 
-
+if __name__=='__main__':
+	parser = argparse.ArgumentParser()
+	parser.add_argument('--exp_name', type=str, default = 'MNIST', help='experiment name')
+	parser.add_argument('--batch_size', type=int, default = int(64), help='batch_size')
+	parser.add_argument('--lr', type=float, default = float(1e-3), help='learning rate')
+	parser.add_argument('--nb_epochs', type=int, default = int(10), help='number of epochs')
+ 
+ 
+	args = parser.parse_args()
+	exp_name = args.exp_name
+	batch_size = args.batch_size
+	nb_epochs = args.nb_epochs
+	lr = args.lr
