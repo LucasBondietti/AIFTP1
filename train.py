@@ -9,25 +9,29 @@ import torch.nn.functional as F
 import torch.optim as optim
 from tqdm import tqdm
 
+from torch.utils.tensorboard import SummaryWriter
+
 from model import MNISTNet
 
 # setting device on GPU if available, else CPU
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-def train(net, optimizer, loader, epochs=10):
-    criterion = nn.CrossEntropyLoss()
-    for epoch in range(epochs):
-        running_loss = []
-        t = tqdm(loader)
-        for x, y in t:
-            x, y = x.to(device), y.to(device)
-            outputs = net(x)
-            loss = criterion(outputs, y)
-            running_loss.append(loss.item())
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-            t.set_description(f'training loss: {mean(running_loss)}')
+def train(net, optimizer, loader, epochs=10, writer=None):
+	criterion = nn.CrossEntropyLoss()
+	for epoch in range(epochs):
+		running_loss = []
+		t = tqdm(loader)
+		for x, y in t:
+			x, y = x.to(device), y.to(device)
+			outputs = net(x)
+			loss = criterion(outputs, y)
+			running_loss.append(loss.item())
+			optimizer.zero_grad()
+			loss.backward()
+			optimizer.step()
+			t.set_description(f'training loss: {mean(running_loss)}')
+		if writer is not None:
+			writer.add_scalar('training loss', mean(running_loss), epoch)
 
 def test(model, dataloader):
     test_corrects = 0
