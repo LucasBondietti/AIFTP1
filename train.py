@@ -30,8 +30,7 @@ def train(net, optimizer, loader, epochs=10, writer=None):
 			loss.backward()
 			optimizer.step()
 			t.set_description(f'training loss: {mean(running_loss)}')
-		if writer is not None:
-			writer.add_scalar('training loss', mean(running_loss), epoch)
+		writer.add_scalar('training loss', mean(running_loss), epoch)
 
 def test(model, dataloader):
     test_corrects = 0
@@ -87,3 +86,23 @@ if __name__=='__main__':
 		os.mkdir('./models')
 		
 	torch.save(net.state_dict(), f'./weights/mnist_net.pth')
+	
+    # for experiment management
+	writer.add_hparams({'lr': lr, 'bsize': batch_size}, {'hparam/accuracy': test_acc}, run_name='MNIST')
+ 
+ 
+	#add embeddings to tensorboard
+	perm = torch.randperm(len(trainset.data))
+	images, labels = trainset.data[perm][:256], trainset.targets[perm][:256]
+	images = images.unsqueeze(1).float().to(device)
+	with torch.no_grad():
+		embeddings = net.get_features(images)
+	writer.add_embedding(embeddings,
+					metadata=labels,
+					label_img=images, global_step=1)
+	
+	# save networks computational graph in tensorboard
+	writer.add_graph(net, images)
+	# save a dataset sample in tensorboard
+	img_grid = torchvision.utils.make_grid(images[:64])
+	writer.add_image('mnist_images', img_grid)
