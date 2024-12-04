@@ -77,3 +77,9 @@ if __name__=='__main__':
 	test_acc = test(net, testloader)
  
 	print(f'test accuracy: {test_acc}')
+     
+    # save your model
+	if not os.path.exists('./models'):
+		os.mkdir('./models')
+		
+	torch.save(net.state_dict(), f'./weights/mnist_net.pth')
