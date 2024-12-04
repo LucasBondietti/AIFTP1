@@ -48,7 +48,6 @@ if __name__=='__main__':
 	parser.add_argument('--lr', type=float, default = float(1e-3), help='learning rate')
 	parser.add_argument('--nb_epochs', type=int, default = int(10), help='number of epochs')
  
- 
 	args = parser.parse_args()
 	exp_name = args.exp_name
 	batch_size = args.batch_size
@@ -67,3 +66,14 @@ if __name__=='__main__':
 	# dataloaders
 	trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True, num_workers=2)
 	testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size, shuffle=False, num_workers=2)
+ 
+	net = MNISTNet().to(device)
+	# default `log_dir` is "runs" - we'll be more specific here
+	writer = SummaryWriter(f'runs/{exp_name}')
+	
+	optimizer = optim.SGD(net.parameters(), lr=lr, momentum=0.9)
+ 
+	train(net, optimizer, trainloader, nb_epochs, writer)
+	test_acc = test(net, testloader)
+ 
+	print(f'test accuracy: {test_acc}')
